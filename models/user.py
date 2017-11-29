@@ -41,15 +41,15 @@ class User:
             #cnx.commit()
             return True
         else:
-            sql = """UPDATE Users SET email='%s', username='%s', 
-            hashed_password='%s' WHERE id=%s;"""
+            sql = """UPDATE Users SET email=%s, username=%s, 
+            hashed_password=%s WHERE id=%s;"""
             values = (self.email, self.username, self.hashed_password, self.id)
             cursor.execute(sql, values)
             return True
         return False
 
-    @staticmethod
-    def load_user_by_id(cursor, id):
+    #@staticmethod
+    def load_user_by_id(self, cursor, id):
         #sql = "SELECT * FROM Users WHERE id='%s'"
         sql = "SELECT * FROM Users WHERE id={}".format(id)
         #cursor.execute(sql, (id))
@@ -58,7 +58,7 @@ class User:
         print(data)
         if data is not None:
             loaded_user = User()
-            loaded_user.__id = data[0]
+            self.__id = data[0]
             loaded_user.username = data[1]
             loaded_user.email = data[2]
             loaded_user.__hashed_password = data[3]
@@ -87,16 +87,33 @@ class User:
             ret.append(loaded_user.email)
         return ret
 
+    def delete(self, cursor):
+        sql = "DELETE FROM Users WHERE id={}".format(self.__id)
+        cursor.execute(sql)
+        self.__id = -1
+        return True
+
 
 u=User()
-u.email = "ani@an"
-u.username = "ann"
+#u.email = "ani@an"
+#u.username = "ann"
 #print(u.id)
 #print(u.hashed_password)
 #print(u.set_password('kotek'))
 #print(u.save_to_db(cursor))
+#print(u.load_all_users(cursor))
+
 #u.load_user_by_id(cursor,5)
-print(u.load_all_users(cursor))
+#u.email = "rys@an"
+#u.username = "krysia"
+#u.set_password("gdakac")
+#print(u.save_to_db(cursor))
+
+u.load_user_by_id(cursor,3)
+print(u.id)
+u.delete(cursor)
+print(u.id)
+
 
 cnx.commit()
 cursor.close()
